@@ -1,2 +1,2 @@
-# wrc-gpts-gallery
+# Bicome-gpts-gallery
 Bicome GPTs 資源庫
