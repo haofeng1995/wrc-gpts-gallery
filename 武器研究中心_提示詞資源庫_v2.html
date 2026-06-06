@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>武器研究中心 — GPTs 資源庫</title>
+<style>
+  :root {
+    --bg: #0c0e14;
+    --surface: #13161f;
+    --surface2: #1c2030;
+    --border: #252940;
+    --text: #e4e8f4;
+    --text2: #7a849c;
+    --accent: #5b7cf5;
+    --accent2: #3dd6c8;
+    --c-paul: #f0a500;
+    --c-plan: #7c6ef5;
+    --c-analyst: #3ecf8e;
+    --c-report: #f87171;
+    --c-build: #38bdf8;
+    --c-ops: #fb923c;
+    --c-ai: #a78bfa;
+    --c-live: #e879f9;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "PingFang TC", "Noto Sans TC", -apple-system, sans-serif;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse 60% 40% at 80% 10%, rgba(91,124,245,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 10% 80%, rgba(61,214,200,0.05) 0%, transparent 50%);
+  }
+
+  header {
+    background: rgba(19,22,31,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo { font-size: 17px; font-weight: 700; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
+  .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .logo-sub { color: var(--text2); font-size: 13px; font-weight: 400; }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .updated-badge { font-size: 11px; color: var(--text2); background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 4px 10px; }
+
+  .hero { padding: 56px 32px 40px; max-width: 1200px; margin: 0 auto; }
+  .hero h1 { font-size: 36px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; }
+  .hero h1 span { color: var(--accent); }
+  .hero p { color: var(--text2); margin-top: 12px; font-size: 15px; line-height: 1.6; }
+  .hero-meta { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+  .hero-badge { background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 5px 14px; font-size: 13px; color: var(--text2); }
+  .hero-badge b { color: var(--accent2); }
+
+  /* NAME MODAL */
+  .name-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); z-index: 200; display: flex; align-items: center; justify-content: center; }
+  .name-modal { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 36px; width: 360px; text-align: center; }
+  .name-modal h2 { font-size: 20px; margin-bottom: 8px; }
+  .name-modal p { color: var(--text2); font-size: 14px; margin-bottom: 24px; line-height: 1.6; }
+  .name-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 10px 14px; font-size: 15px; font-family: inherit; outline: none; transition: border-color .15s; margin-bottom: 14px; }
+  .name-input:focus { border-color: var(--accent); }
+  .name-btn { width: 100%; background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 11px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; transition: opacity .15s; }
+  .name-btn:hover { opacity: 0.85; }
+  .name-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* USER TAG */
+  .user-tag { font-size: 13px; color: var(--accent2); background: rgba(61,214,200,0.1); border: 1px solid rgba(61,214,200,0.2); border-radius: 20px; padding: 4px 12px; cursor: pointer; }
+  .user-tag:hover { background: rgba(61,214,200,0.15); }
+
+  .filter-bar { padding: 0 32px 24px; max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .filter-label { color: var(--text2); font-size: 13px; margin-right: 4px; }
+  .filter-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text2); border-radius: 20px; padding: 6px 14px; font-size: 13px; cursor: pointer; transition: all .15s; font-family: inherit; }
+  .filter-btn:hover { border-color: var(--accent); color: var(--text); }
+  .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .search-wrap { margin-left: auto; position: relative; }
+  .search-wrap input { background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 7px 14px 7px 34px; font-size: 13px; width: 200px; font-family: inherit; outline: none; transition: border-color .15s; }
+  .search-wrap input:focus { border-color: var(--accent); }
+  .search-wrap input::placeholder { color: var(--text2); }
+  .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text2); font-size: 13px; }
+
+  .grid { padding: 0 32px 64px; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 10px; transition: border-color .2s, transform .2s, box-shadow .2s; position: relative; overflow: hidden; animation: fadeIn .25s ease both; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--role-color, var(--accent)); opacity: 0.8; }
+  .card:hover { border-color: var(--role-color, var(--accent)); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+
+  .card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+  .card-title { font-size: 15px; font-weight: 600; line-height: 1.4; flex: 1; }
+  .role-badge { background: color-mix(in srgb, var(--role-color, var(--accent)) 15%, transparent); color: var(--role-color, var(--accent)); border: 1px solid color-mix(in srgb, var(--role-color, var(--accent)) 30%, transparent); border-radius: 20px; padding: 3px 10px; font-size: 11px; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
+
+  .card-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+  .meta-tag { background: var(--surface2); color: var(--text2); border-radius: 4px; padding: 3px 8px; font-size: 11px; display: flex; align-items: center; gap: 4px; }
+  .meta-tag.timing { color: var(--accent2); background: rgba(61,214,200,0.08); }
+
+  .card-desc { font-size: 13px; color: var(--text2); line-height: 1.6; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+  /* IO ROW */
+  .io-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .io-chip { display: flex; align-items: center; gap: 5px; background: var(--surface2); border-radius: 6px; padding: 4px 8px; font-size: 11px; }
+  .io-chip .io-label { color: var(--text2); opacity: 0.7; font-size: 10px; text-transform: uppercase; letter-spacing: .5px; }
+  .io-chip .io-val { color: var(--text); }
+  .io-chip.output .io-label { color: var(--accent2); opacity: 1; }
+  .io-chip.output .io-val { color: var(--accent2); }
+
+  .card-footer { display: flex; justify-content: flex-end; margin-top: 2px; }
+  .open-btn { background: var(--role-color, var(--accent)); color: #fff; border: none; border-radius: 8px; padding: 8px 18px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: opacity .15s, transform .1s; white-space: nowrap; font-family: inherit; }
+  .open-btn:hover { opacity: 0.85; transform: scale(1.02); }
+
+  .empty { grid-column: 1/-1; text-align: center; padding: 80px 20px; color: var(--text2); }
+
+  .section-head { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-top: 8px; margin-bottom: 4px; }
+  .section-head h2 { font-size: 14px; font-weight: 600; color: var(--text2); letter-spacing: 1px; text-transform: uppercase; }
+  .section-count { background: var(--surface2); border-radius: 10px; padding: 2px 8px; font-size: 12px; color: var(--text2); }
+
+  footer { border-top: 1px solid var(--border); padding: 20px 32px; text-align: center; color: var(--text2); font-size: 12px; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<!-- NAME MODAL -->
+<div class="name-overlay" id="nameOverlay">
+  <div class="name-modal">
+    <div style="font-size:32px;margin-bottom:12px;">⚔️</div>
+    <h2>歡迎來到武器研究中心</h2>
+    <p>請先輸入你的名字<br>這樣我們知道哪些工具被誰在用</p>
+    <input class="name-input" id="nameInput" type="text" placeholder="你的名字（例：阿鋒）" maxlength="20">
+    <button class="name-btn" id="nameBtn" disabled>進入 →</button>
+  </div>
+</div>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">⚔️</div>
+    <div>
+      武器研究中心
+      <div class="logo-sub">GPTs 資源庫</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="updated-badge">最後更新：2025/06/06</span>
+    <span class="user-tag" id="userTag" style="display:none" onclick="resetUser()"></span>
+  </div>
+</header>
+
+<div class="hero">
+  <h1>31 個 <span>GPTs 工具</span><br>等你拿來直接用</h1>
+  <p>涵蓋建群、內容規劃、導購、遊戲化、分析、AI 提效六大模組<br>點擊「開啟」直接進入 ChatGPT 對應 GPT。</p>
+  <div class="hero-meta">
+    <div class="hero-badge"><b>31</b> 個工具</div>
+    <div class="hero-badge"><b>7</b> 大模組</div>
+    <div class="hero-badge">全部可直接使用</div>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <span class="filter-label">篩選模組：</span>
+  <button class="filter-btn active" data-filter="all">全部</button>
+  <button class="filter-btn" data-filter="建群模組">建群</button>
+  <button class="filter-btn" data-filter="主題模組">內容規劃</button>
+  <button class="filter-btn" data-filter="導購模組">導購</button>
+  <button class="filter-btn" data-filter="遊戲化模組">遊戲化</button>
+  <button class="filter-btn" data-filter="分析模組">分析</button>
+  <button class="filter-btn" data-filter="鋪陳收尾模組">鋪陳收尾</button>
+  <button class="filter-btn" data-filter="AI輔助">AI 輔助</button>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="搜尋工具名稱...">
+  </div>
+</div>
+
+<div class="grid" id="cardGrid"></div>
+
+<footer>
+  武器研究中心 · Bicome · 僅供內部使用 · <span id="footerUser"></span>
+</footer>
+
+<script>
+const ROLE_COLORS = {
+  '執行長paul': '#f0a500',
+  '規劃者': '#7c6ef5',
+  '分析者': '#3ecf8e',
+  '週報專員': '#f87171',
+  '建群專家': '#38bdf8',
+  '操盤手': '#fb923c',
+  'AI小幫手': '#a78bfa',
+  'livetalk主導人': '#e879f9',
+};
+
+const MODULE_MAP = {
+  '建群模組': '建群模組', '世界觀與人設模組': '建群模組',
+  '主題模組': '主題模組', 'livetalk模組': '主題模組',
+  '導購模組': '導購模組',
+  '遊戲化模組': '遊戲化模組',
+  '分析模組': '分析模組', '用戶忠誠模組': '分析模組',
+  '鋪陳收尾模組': '鋪陳收尾模組', '多帳號操作模組': '鋪陳收尾模組',
+  '全局詢問': 'AI輔助', '': 'AI輔助',
+};
+
+const MODULE_GROUPS = {
+  '建群模組': '🏗️ 建群模組',
+  '主題模組': '📅 內容規劃模組',
+  '導購模組': '💰 導購模組',
+  '遊戲化模組': '🎮 遊戲化模組',
+  '分析模組': '🔍 分析模組',
+  '鋪陳收尾模組': '🎯 鋪陳收尾模組',
+  'AI輔助': '🤖 AI 輔助',
+};
+
+const TIMING_LABELS = { '日': '每日', '週': '每週', '月': '每月', '季': '每季', '': '依需求' };
+
+const GPTS = [
+  {"name":"活動規劃師","link":"https://chatgpt.com/g/g-67d036e6c09081918c064e6faad9dfa4-she-qun-huo-dong-gui-hua-shi","role":"規劃者","module":"鋪陳收尾模組","timing":"月","input":"活動概念","output":"活動腳本 + 週排程","desc":"四步驟規劃完整 LINE 社群活動，含預熱策略、文案、互動模擬與活動後收尾"},
+  {"name":"群腳本製造機","link":"https://chatgpt.com/g/g-67d23b86aef88191befcf76197dc6517-ju-ben-zhi-zao-ji","role":"規劃者","module":"多帳號操作模組","timing":"月","input":"議題 + 角色設定","output":"多角色對話劇本","desc":"專業編劇助手，設計多角色社群對話劇本，適合教育、議題或銷售情境"},
+  {"name":"Paul 的遊戲化營運路徑","link":"https://chatgpt.com/g/g-68494a89c554819191fbe7c74bebc33d-paulde-you-xi-hua-ying-yun-lu-jing","role":"執行長paul","module":"遊戲化模組","timing":"季","input":"專案背景資料","output":"三階段遊戲化策略（每階段 8+ 任務）","desc":"依三階段營運路徑（拉新→留存→裂變）規劃遊戲化策略，每階段至少 8 個任務"},
+  {"name":"Bicome Paul 腦迴路","link":"https://chatgpt.com/g/g-683531c76ee481919596ffb453edd1bc-bicome-paul-de-nao-hui-lu","role":"執行長paul","module":"全局詢問","timing":"季","input":"任何社群問題","output":"策略拆解 + 行動建議","desc":"Bicome 操盤手分身，策略轉譯與啟動引導，拆解痛點並整合知識庫、趨勢與數據"},
+  {"name":"FAQ 整理","link":"https://chatgpt.com/g/g-681d72cf099481918e0402592fda1fe6-faqzheng-li","role":"規劃者","module":"分析模組","timing":"月","input":"月聊天記錄 + 品牌資訊","output":"結構化 FAQ 資料庫","desc":"從聊天紀錄萃取常見問題，整理成結構化 FAQ 資料庫"},
+  {"name":"社群活動復盤助手","link":"https://chatgpt.com/g/g-67d034a6dde48191b42d5efa45d01706-she-qun-huo-dong-fu-pan-zhu-shou","role":"規劃者","module":"分析模組","timing":"週","input":"活動數據 + 聊天記錄","output":"復盤報告 + 優化建議","desc":"活動結束後快速產出復盤報告，找出問題點與下次優化方向"},
+  {"name":"多結局任務","link":"https://chatgpt.com/g/g-681d58e28e348191ba2b338c99764993-duo-jie-ju-ren-wu","role":"規劃者","module":"遊戲化模組","timing":"季","input":"品牌資訊 + 情境背景","output":"分支劇情 + 社群任務設計","desc":"設計多節點分支劇情，結合社群投票任務，創造 OMO 互動體驗"},
+  {"name":"話題主題九宮格","link":"https://chatgpt.com/g/g-68634ab44594819188547589e90a5361-hua-ti-zhu-ti-jiu-gong-ge","role":"規劃者","module":"主題模組","timing":"季","input":"月主軸或價值主張","output":"九宮格關鍵字架構 + 話題延伸","desc":"輸入社群主軸，產出九宮格關鍵字架構，延伸每格話題激發聊天內容"},
+  {"name":"建群全套（VCPVC + 人設 + 文案）","link":"https://chatgpt.com/g/g-686d0dbf3af081918132efd264576653-jian-qun","role":"建群專家","module":"建群模組","timing":"季","input":"商品 + 品牌資訊","output":"VCPVC + 九宮格 + 人設 + 開群文案","desc":"一站式建群工具：完成 VCPVC 定位、營運九宮格、社群人設設計與開群文案"},
+  {"name":"話題九宮格 × 一季活動規劃","link":"https://chatgpt.com/g/g-6887248ab5b48191b8783b9cfd908715-zhu-ti-jiu-gong-ge-yi-ji-huo-dong-gui-hua","role":"規劃者","module":"主題模組","timing":"季","input":"品牌主軸","output":"一季活動規劃表 + 主題週節奏","desc":"從話題九宮格延伸，產出一整季活動規劃，含主題週與月份節奏"},
+  {"name":"每日收尾","link":"https://chatgpt.com/g/g-688aeea14c6c8191b7644d62a26ce3ba-mei-ri-shou-wei","role":"操盤手","module":"鋪陳收尾模組","timing":"日","input":"當日聊天記錄","output":"社群日報（熱點 + 活躍用戶 + 活動提醒）","desc":"把日聊天紀錄整理成社群日報，包含熱點回顧、活躍用戶感謝、活動提醒"},
+  {"name":"週規劃","link":"https://chatgpt.com/g/g-68930615b9b081919744ad250ca1b942-zhou-gui-hua","role":"規劃者","module":"鋪陳收尾模組","timing":"週","input":"週主題 + 聊天記錄","output":"七天內容規劃 + 早晚安文 + 話題庫","desc":"根據週主題生成七天內容規劃（投票、知識文、FAQ、早晚安文），並附話題庫"},
+  {"name":"導購流程規劃","link":"https://chatgpt.com/g/g-689afe888a7c81919754173559a5255b-dao-gou-sopgui-hua","role":"規劃者","module":"導購模組","timing":"月","input":"品牌 + 商品 + 開賣時間","output":"Pipeline 時間線表格 + Livetalk 腳本 + FAQ","desc":"完整導購 SOP：前置確認 → 素材清單 → Pipeline 時間線 → Livetalk + FAQ"},
+  {"name":"產品群腳本","link":"https://chatgpt.com/g/g-68a4668d3b948191813736320065fc3a-chan-pin-tao-lun-mo-ni-chan-pin-qun-jiao-ben","role":"規劃者","module":"導購模組","timing":"月","input":"商品資訊","output":"產品討論群腳本","desc":"模擬真實用戶討論商品的群腳本，製造自然的產品話題氛圍"},
+  {"name":"Livetalk","link":"https://chatgpt.com/g/g-68ac912164948191b40f9c440c07aa45-livetalk-gpt","role":"livetalk主導人","module":"livetalk模組","timing":"季","input":"活動規劃","output":"30 分鐘 Livetalk 完整腳本","desc":"逐步引導完成 Livetalk 規劃：背景調查 → 議題設計 → 30 分鐘完整腳本"},
+  {"name":"小編人設設計","link":"https://chatgpt.com/g/g-68b0346e4b508191886edfe9140dc4aa-xiao-bian-ren-she-she-ji","role":"建群專家","module":"世界觀與人設模組","timing":"季","input":"品牌資訊","output":"小編人設卡（個性 + 口吻 + 回覆風格）","desc":"為社群設計小編人設，定義個性、口吻與回覆風格，讓品牌有溫度"},
+  {"name":"開群首月規劃","link":"https://chatgpt.com/g/g-6855302fdedc8191b41e90b152430444-kai-qun-shou-yue-gui-hua","role":"建群專家","module":"建群模組","timing":"月","input":"VCPVG 資料","output":"開群首月","desc":"根據 VCPVG 產出建群首月完整內容規劃，含主題週、儀式日與節奏設計"},
+  {"name":"營運九宮格","link":"https://chatgpt.com/g/g-685526640358819180548c6d454c18d6-ying-yun-jiu-gong-ge","role":"建群專家","module":"建群模組","timing":"季","input":"VCPVG","output":"營運規劃策略","desc":"將 VCPVG 轉化為九宮格營運策略，定義各象限的內容重心與行動"},
+  {"name":"VCPVC（社群定位）","link":"https://chatgpt.com/g/g-685226ef77dc81918fd16a678b1225ef-vcpvc","role":"建群專家","module":"建群模組","timing":"季","input":"商品 + 品牌資訊","output":"VCPVG 定位文件","desc":"跑 VCPVC 框架，輸出社群價值主張、核心受眾、成員行為與社群目標"},
+  {"name":"暗樁人設建立","link":"https://chatgpt.com/g/g-6982ce2f9d30819180a34dfb8bc86b04-an-zhuang-ren-she-bei-jing-jian-li","role":"建群專家","module":"建群模組","timing":"季","input":"品牌資訊","output":"暗樁角色人設卡","desc":"建立暗樁角色人設背景，讓每個暗樁發言有一致的個性與可信度"},
+  {"name":"社群主題週","link":"https://chatgpt.com/g/g-69dfbe0d4ac08191bd91e77fb3166b64-she-qun-zhu-ti-zhou","role":"規劃者","module":"主題模組","timing":"季","input":"VCPVG","output":"月份主題週 + 話題設計","desc":"將品牌核心價值轉換為主題週系統，輸出指定月份的話題規劃"},
+  {"name":"週主題 → 日話題","link":"https://chatgpt.com/g/g-69dc9c25040c819192a642d07a3df5dd-zhou-zhu-ti-ri-hua-ti","role":"規劃者","module":"主題模組","timing":"週","input":"週主題 + 10 個話題","output":"五天的話題文案排程","desc":"互動式生成：把週主題轉換成一週五天的社群話題排程文案"},
+  {"name":"用戶旅程分析（四大建議）","link":"https://chatgpt.com/g/g-69dfce9e38a08191b1049ceec93e0cf8-yong-hu-lu-cheng-fen-xi","role":"分析者","module":"用戶忠誠模組","timing":"月","input":"月聊天記錄","output":"用戶旅程分析報告 + 四大營運建議","desc":"分析用戶在商業旅程與社群歸屬旅程的位置，輸出分佈表與四大營運建議"},
+  {"name":"Skill Creator","link":"https://chatgpt.com/g/g-69dd9b1aace08191b524e32db979d711-skill-creator","role":"AI小幫手","module":"全局詢問","timing":"週","input":"想要的技能描述","output":"技能提示詞（可直接使用）","desc":"把 SOP 或工作流程轉換成 AI Skill 提示詞，輸出可直接使用的技能系統"},
+  {"name":"30 天五階段早晚安","link":"https://chatgpt.com/g/g-69dfc3de8b088191abf0de7414f38726-30tian-wu-jie-duan-zao-wan-an","role":"規劃者","module":"主題模組","timing":"月","input":"商品 + 品牌 + 聊天記錄","output":"30 天 60 篇早晚安文","desc":"根據五意識階段生成 30 天 60 篇早晚安文，模仿小編口吻逐步引導受眾"},
+  {"name":"會議記錄助手","link":"https://chatgpt.com/g/g-69df12f1ebe081919401f22eb20483e4-hui-yi-ji-lu-zhu-shou","role":"週報專員","module":"分析模組","timing":"週","input":"會議逐字稿","output":"會議摘要（決議 + 待辦 + 負責人）","desc":"將混亂逐字稿整理成清晰會議記錄，包含決議、待辦、負責人與截止日期"},
+  {"name":"提示詞優化（省 Token）","link":"https://chatgpt.com/g/g-69df1b5801f4819190f8d6d57a420547-ti-shi-ci-you-hua","role":"AI小幫手","module":"分析模組","timing":"週","input":"原始提示詞","output":"省 token 優化版 + 穩定輸出版","desc":"輸出兩個版本：極致省 token 版 + 穩定輸出版，附說明哪些冗餘被刪除"},
+  {"name":"社群商品公告文","link":"https://chatgpt.com/g/g-69df213151bc81919388dbde6a9302b4-she-qun-shang-pin-gong-gao-wen","role":"規劃者","module":"導購模組","timing":"月","input":"商品官網連結","output":"LINE 社群商品公告文案","desc":"讀取商品頁資訊，直接生成 LINE 社群可發佈的商品公告文案"},
+  {"name":"儀式日任務設計","link":"https://chatgpt.com/g/g-69dfbf672f6c8191a2701dd9b56adb94-yi-shi-ri","role":"規劃者","module":"主題模組","timing":"月","input":"品牌資訊 + 目標行為","output":"六大分類儀式日任務表 + 示範文案","desc":"設計六大分類儀式日任務系統，每類 10 個任務，含驗證方式與一週示範文案"},
+  {"name":"小編暗樁四階段腳本","link":"https://chatgpt.com/g/g-69d54fb5212881919d9afd988d870ea6-xiao-bian-ji-an-zhuang-zhen-dui-dang-qi-de-si-jie-duan-cao-zuo","role":"規劃者","module":"導購模組","timing":"月","input":"商品 + 活動優惠","output":"四階段暗樁腳本（預熱→引爆→口碑→沉澱）","desc":"針對檔期規劃四階段暗樁劇本：預熱→引爆→口碑→沉澱，語氣貼近真實用戶"},
+  {"name":"社群營運與暗樁 GPTs 集","link":"https://chatgpt.com/g/g-69e834b1be148191a706040ce5ccded7-she-qun-ying-yun-yu-an-zhuang-gptsji","role":"規劃者","module":"導購模組","timing":"月","input":"關鍵字指令","output":"對應模式的社群營運腳本","desc":"整合多個社群營運與暗樁提示詞的總集 GPT，輸入關鍵字即切換對應模式"},
+];
+
+// --- USER ---
+let currentUser = localStorage.getItem('wrc_user') || '';
+
+function initUser() {
+  if (currentUser) {
+    showApp();
+  } else {
+    document.getElementById('nameOverlay').style.display = 'flex';
+  }
+}
+
+function showApp() {
+  document.getElementById('nameOverlay').style.display = 'none';
+  const tag = document.getElementById('userTag');
+  tag.textContent = '👤 ' + currentUser;
+  tag.style.display = 'inline-flex';
+  document.getElementById('footerUser').textContent = '登入身分：' + currentUser;
+  renderCards();
+}
+
+function resetUser() {
+  if (confirm('重設使用者身分？')) {
+    localStorage.removeItem('wrc_user');
+    localStorage.removeItem('wrc_log');
+    currentUser = '';
+    document.getElementById('nameOverlay').style.display = 'flex';
+    document.getElementById('nameInput').value = '';
+    document.getElementById('nameBtn').disabled = true;
+  }
+}
+
+document.getElementById('nameInput').addEventListener('input', function() {
+  document.getElementById('nameBtn').disabled = this.value.trim().length === 0;
+});
+
+document.getElementById('nameInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && this.value.trim()) submitName();
+});
+
+document.getElementById('nameBtn').addEventListener('click', submitName);
+
+function submitName() {
+  const val = document.getElementById('nameInput').value.trim();
+  if (!val) return;
+  currentUser = val;
+  localStorage.setItem('wrc_user', val);
+  showApp();
+}
+
+// --- LOG CLICKS ---
+function logClick(toolName) {
+  const log = JSON.parse(localStorage.getItem('wrc_log') || '[]');
+  log.push({ user: currentUser, tool: toolName, time: new Date().toISOString() });
+  localStorage.setItem('wrc_log', JSON.stringify(log));
+}
+
+// --- RENDER ---
+let currentFilter = 'all';
+let currentSearch = '';
+
+function getDisplayModule(item) {
+  return MODULE_MAP[item.module] || 'AI輔助';
+}
+
+function renderCards() {
+  const grid = document.getElementById('cardGrid');
+  grid.innerHTML = '';
+
+  let filtered = GPTS.filter(item => {
+    const mod = getDisplayModule(item);
+    const matchFilter = currentFilter === 'all' || mod === currentFilter;
+    const matchSearch = !currentSearch ||
+      item.name.toLowerCase().includes(currentSearch) ||
+      (item.desc || '').toLowerCase().includes(currentSearch) ||
+      item.role.toLowerCase().includes(currentSearch);
+    return matchFilter && matchSearch;
+  });
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div class="empty"><div style="font-size:40px;margin-bottom:12px;">🔍</div><div style="font-size:16px;margin-bottom:8px;">找不到符合的工具</div></div>`;
+    return;
+  }
+
+  if (currentFilter === 'all') {
+    const groups = {};
+    filtered.forEach(item => {
+      const mod = getDisplayModule(item);
+      if (!groups[mod]) groups[mod] = [];
+      groups[mod].push(item);
+    });
+    const order = ['建群模組','主題模組','導購模組','遊戲化模組','分析模組','鋪陳收尾模組','AI輔助'];
+    order.forEach(mod => {
+      if (!groups[mod] || groups[mod].length === 0) return;
+      const head = document.createElement('div');
+      head.className = 'section-head';
+      head.innerHTML = `<h2>${MODULE_GROUPS[mod]}</h2><span class="section-count">${groups[mod].length}</span>`;
+      grid.appendChild(head);
+      groups[mod].forEach(item => grid.appendChild(makeCard(item)));
+    });
+  } else {
+    filtered.forEach(item => grid.appendChild(makeCard(item)));
+  }
+}
+
+function makeCard(item) {
+  const color = ROLE_COLORS[item.role] || '#5b7cf5';
+  const div = document.createElement('div');
+  div.className = 'card';
+  div.style.setProperty('--role-color', color);
+
+  const timingLabel = TIMING_LABELS[item.timing] || item.timing || '依需求';
+  const inputChip = item.input ? `<div class="io-chip"><span class="io-label">輸入</span><span class="io-val">${item.input}</span></div>` : '';
+  const outputChip = item.output ? `<div class="io-chip output"><span class="io-label">產出</span><span class="io-val">${item.output}</span></div>` : '';
+
+  div.innerHTML = `
+    <div class="card-header">
+      <div class="card-title">${item.name}</div>
+      <div class="role-badge" style="--role-color:${color}">${item.role}</div>
+    </div>
+    <div class="card-meta">
+      <div class="meta-tag timing">⏱ ${timingLabel}使用</div>
+      <div class="meta-tag">${getDisplayModule(item)}</div>
+    </div>
+    <div class="card-desc">${item.desc || '點擊開啟，查看完整功能說明'}</div>
+    ${(inputChip || outputChip) ? `<div class="io-row">${inputChip}${outputChip}</div>` : ''}
+    <div class="card-footer">
+      <a class="open-btn" href="${item.link}" target="_blank" rel="noopener" onclick="logClick('${item.name.replace(/'/g,"\\'")}')">開啟 ↗</a>
+    </div>
+  `;
+  return div;
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderCards();
+  });
+});
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  currentSearch = e.target.value.toLowerCase().trim();
+  renderCards();
+});
+
+initUser();
+</script>
+</body>
+</html>
